@@ -12,13 +12,15 @@ export class DatesComponent implements OnInit {
   isSubmitted = false;
   isSelectedFromMonth = false;
 
-  selectedFromYear : any ;
+  selectedFromYear: any ;
   selectedFromMonth: any;
+  selectedToYear: any ;
   selectedToMonth: any;
   fromYear: any = [];
   toYear: any = [];
   toMonths: any = [];
   months: any = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  generatedData: any = [];
   constructor(public fb: FormBuilder) { }
 
   builderForm = this.fb.group({
@@ -26,8 +28,6 @@ export class DatesComponent implements OnInit {
     FromMonth: ['', [Validators.required]],
     ToYear: ['', [Validators.required]],
     ToMonth: ['', [Validators.required]],
-
-    // To : ['', [Validators.required]]
   });
 
 
@@ -46,13 +46,14 @@ export class DatesComponent implements OnInit {
   changeToMonth(e) {
     console.log(typeof(e.target.value));
     console.log(JSON.stringify((e.target.value).split(':')));
+    this.selectedToMonth = (e.target.value).split(':')[0] ;
     // this.From.setValue(e.target.value, {
     //   onlySelf: true
     // });
   }
   changeFromYear(e) {
     console.log(e.target.value);
-    this.toYear = this.fromYear.slice((e.target.value).split(':')[0]-1,this.fromYear.length);
+    this.toYear = this.fromYear.slice((e.target.value).split(':')[0] - 1, this.fromYear.length);
     console.log((e.target.value).split(':')[1]);
     this.selectedFromYear = (e.target.value).split(':')[1];
     console.log(this.toYear);
@@ -65,9 +66,10 @@ export class DatesComponent implements OnInit {
     console.log(JSON.stringify((e.target.value).split(':')));
     if (this.selectedFromYear === (e.target.value).split(':')[1] ) {
         this.toMonths = this.months.slice(this.selectedFromMonth, this.months.length);
-     }else{
+     } else {
        this.toMonths = this.months ;
      }
+    this.selectedToYear = (e.target.value).split(':')[1];
 
     // this.From.setValue(e.target.value, {
     //   onlySelf: true
@@ -80,7 +82,19 @@ export class DatesComponent implements OnInit {
   get monthName() {
     return this.builderForm.get('Form');
   }
+  generateData() {
+    console.log(this.selectedFromYear);
+    console.log(this.selectedToYear);
+    console.log(this.selectedFromMonth - 1);
+    console.log(this.selectedToMonth);
 
+    if (this.selectedFromYear === this.selectedToYear) {
+      this.generatedData = this.months.splice(this.selectedFromMonth - 1, +this.selectedToMonth + 1);
+      console.log(this.generatedData);
+    }
+
+
+  }
   // Template Driven Form
   onSubmit() {
       this.isSubmitted = true ;
@@ -89,6 +103,7 @@ export class DatesComponent implements OnInit {
       } else {
         alert(JSON.stringify(this.builderForm.value));
       }
+      this.generateData();
     }
 
   // generate 100 years
@@ -99,8 +114,8 @@ export class DatesComponent implements OnInit {
     }
   }
 
-
   ngOnInit() {
+
     this.generateYear();
   }
 
