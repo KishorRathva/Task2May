@@ -102,7 +102,7 @@ export class DatesComponent implements OnInit {
     // console.log(this.selectedFromYear === (e.target.value).split(':')[1]);
     if (this.selectedFromYear === (e.target.value).split(':')[1] ) {
         console.log(this.months.length);
-        this.toMonths = this.months.slice(+this.selectedFromMonth+1,+this.months.length);
+        this.toMonths = this.months.slice(+this.selectedFromMonth + 1, +this.months.length);
         console.log(this.toMonths);
      } else {
        this.toMonths = this.months ;
@@ -144,10 +144,10 @@ export class DatesComponent implements OnInit {
 
       console.log(`yearDifference: ${this.yearDifference}`);
       this.fromYrMonths = this.months.slice(this.selectedFromMonth, +this.months.length);
-      if(this.selectedToMonth == 0){
+      if (this.selectedToMonth === 0) {
         this.toYrMonths = ['JAN'];
-      }else{
-        this.toYrMonths =  this.months.slice(0, +this.selectedToMonth+1);
+      } else {
+        this.toYrMonths =  this.months.slice(0, +this.selectedToMonth + 1);
       }
 
 
@@ -182,11 +182,11 @@ export class DatesComponent implements OnInit {
 
     this.formated =  this.generatedData.map( i => {
     if (i === start) {
-       if(startFlagForJAN){
+       if (startFlagForJAN) {
          year -- ;
          startFlagForJAN = 0;
        }
-        year++;
+       year++;
     }
     return `${i}-${year}`;
   });
@@ -200,7 +200,7 @@ export class DatesComponent implements OnInit {
       if (! this.builderForm.valid) {
         return false;
       } else {
-        alert(JSON.stringify(this.builderForm.value));
+        console.log(JSON.stringify(this.builderForm.value));
       }
       this.generateData();
     }
