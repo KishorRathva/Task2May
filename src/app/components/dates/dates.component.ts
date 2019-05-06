@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder , Validators } from '@angular/forms';
-import { from } from 'rxjs';
+
 
 @Component({
   selector: 'app-dates',
@@ -9,18 +9,34 @@ import { from } from 'rxjs';
 })
 export class DatesComponent implements OnInit {
 
+  // Boolean values
   isSubmitted = false;
   isSelectedFromMonth = false;
 
+  // Selected values
   selectedFromYear: any ;
   selectedFromMonth: any;
   selectedToYear: any ;
   selectedToMonth: any;
-  fromYear: any = [];
-  toYear: any = [];
-  toMonths: any = [];
+
+  // From - To
+  fromYear: any[] = [];
+  toYear: any[] = [];
+  toMonths: any[] = [];
   months: any = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-  generatedData: any = [];
+
+  // Data when two selected year are different
+
+  fromYrMonths: any[] = [];
+  toYrMonths: any[] = [];
+  betweenMonths: any[] = [];
+
+  yearDifference: any ;
+
+  // final result
+  generatedData: any[] = [];
+  // Formated generated data
+  formated: any[] = [];
   constructor(public fb: FormBuilder) { }
 
   builderForm = this.fb.group({
@@ -30,14 +46,20 @@ export class DatesComponent implements OnInit {
     ToMonth: ['', [Validators.required]],
   });
 
-
   // Choose month using select dropdown
   changeFromMonth(e) {
     console.log('into the from month ....');
     console.log(JSON.stringify((e.target.value).split(':')));
     this.selectedFromMonth = (e.target.value).split(':')[0] ;
     console.log(this.selectedFromMonth);
+    console.log(this.months);
     this.isSelectedFromMonth = true;
+
+    // clear all the values that previuosly stored
+    this.generatedData = [];
+    this.betweenMonths = [];
+    this.fromYrMonths = [];
+    this.toYrMonths  = [];
 
     // this.From.setValue(e.target.value, {
     //   onlySelf: true
@@ -47,6 +69,12 @@ export class DatesComponent implements OnInit {
     console.log(typeof(e.target.value));
     console.log(JSON.stringify((e.target.value).split(':')));
     this.selectedToMonth = (e.target.value).split(':')[0] ;
+
+    // clear all the values that previuosly stored
+    this.generatedData = [];
+    this.betweenMonths = [];
+    this.fromYrMonths = [];
+    this.toYrMonths  = [];
     // this.From.setValue(e.target.value, {
     //   onlySelf: true
     // });
@@ -57,6 +85,12 @@ export class DatesComponent implements OnInit {
     console.log((e.target.value).split(':')[1]);
     this.selectedFromYear = (e.target.value).split(':')[1];
     console.log(this.toYear);
+
+    // clear all the values that previuosly stored
+    this.generatedData = [];
+    this.betweenMonths = [];
+    this.fromYrMonths = [];
+    this.toYrMonths  = [];
     // this.From.setValue(e.target.value, {
     //   onlySelf: true
     // });
@@ -70,6 +104,12 @@ export class DatesComponent implements OnInit {
        this.toMonths = this.months ;
      }
     this.selectedToYear = (e.target.value).split(':')[1];
+
+    // clear all the values that previuosly stored
+    this.generatedData = [];
+    this.betweenMonths = [];
+    this.fromYrMonths = [];
+    this.toYrMonths  = [];
 
     // this.From.setValue(e.target.value, {
     //   onlySelf: true
@@ -85,19 +125,58 @@ export class DatesComponent implements OnInit {
   generateData() {
     console.log(this.selectedFromYear);
     console.log(this.selectedToYear);
-    console.log(this.selectedFromMonth - 1);
+    console.log(this.selectedFromMonth);
     console.log(this.selectedToMonth);
 
     if (this.selectedFromYear === this.selectedToYear) {
-      this.generatedData = this.months.splice(this.selectedFromMonth - 1, +this.selectedToMonth + 1);
-      console.log(this.generatedData);
-    }
+      // used slice because it doesn't change original array
+      console.log(`selectedFromMonth-${this.selectedFromMonth}`);
+      console.log(`selectedToMonth-${this.selectedToMonth}`);
+      this.generatedData = this.months.slice(this.selectedFromMonth-1,+this.selectedToMonth+1);
 
+    } else {
+      console.log(`selectedFromMonth-${this.selectedFromMonth}`);
+      console.log(`selectedToMonth-${this.selectedToMonth}`);
+
+      console.log(`yearDifference: ${this.yearDifference}`);
+      this.fromYrMonths = this.months.slice(this.selectedFromMonth - 1, this.months.length);
+      this.toYrMonths =  this.months.slice(0, +this.selectedToMonth+1);
+
+      for (let i = 0; i < this.yearDifference; i++) {
+        this.betweenMonths = (this.betweenMonths).concat(this.months);
+        console.log(`at i = ${i}-${this.betweenMonths}`);
+      }
+      console.log(`fromYrMonths: ${this.fromYrMonths}`);
+      console.log(`between months:${this.betweenMonths}`);
+      console.log(`toYrMonths: ${this.toYrMonths}`);
+      this.generatedData = (this.generatedData).concat(this.fromYrMonths);
+      this.generatedData = (this.generatedData).concat(this.betweenMonths);
+      this.generatedData = (this.generatedData).concat(this.toYrMonths);
+
+    }
+    this.formatedData();
+    console.log(this.formated);
+    console.log(`generatedData : ${this.generatedData}`);
 
   }
+  // Formated output
+
+  formatedData(): void {
+    const start = this.months[0];
+    let year = this.selectedFromYear ;
+    this.formated =  this.generatedData.map( i => {
+    if (i === start) {
+        year++;
+    }
+    return `${i}-${year}`;
+  });
+}
+
   // Template Driven Form
   onSubmit() {
+
       this.isSubmitted = true ;
+      this.yearDifference = this.selectedToYear - this.selectedFromYear - 1 ;
       if (! this.builderForm.valid) {
         return false;
       } else {
@@ -115,7 +194,6 @@ export class DatesComponent implements OnInit {
   }
 
   ngOnInit() {
-
     this.generateYear();
   }
 
