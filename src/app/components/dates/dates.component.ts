@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder , Validators } from '@angular/forms';
+import { FormBuilder , Validators, FormGroup, FormArray } from '@angular/forms';
 
 
 @Component({
@@ -8,6 +8,14 @@ import { FormBuilder , Validators } from '@angular/forms';
   styleUrls: ['./dates.component.css']
 })
 export class DatesComponent implements OnInit {
+  constructor(public fb: FormBuilder) { }
+
+
+  // Getter method to access formcontrols
+
+  get monthName() {
+    return this.builderForm.get('Form');
+  }
 
   // Boolean values
   isSubmitted = false;
@@ -37,7 +45,11 @@ export class DatesComponent implements OnInit {
   generatedData: any[] = [];
   // Formated generated data
   formated: any[] = [];
-  constructor(public fb: FormBuilder) { }
+  // create a formGroup that corresponds to the template
+  formGroup = this.fb.group({
+    MonthlyData: this.fb.array([]),
+  });
+
 
   builderForm = this.fb.group({
     FromYear: ['', [Validators.required]],
@@ -45,6 +57,19 @@ export class DatesComponent implements OnInit {
     ToYear: ['', [Validators.required]],
     ToMonth: ['', [Validators.required]],
   });
+
+  // generate forms
+  genForms() {
+    const data = this.formGroup.controls.MonthlyData as FormArray;
+    for (let i = 0; i < this.formated.length, i++) {
+      data.push(this.fb.group({
+        FirstName: '',
+        MiddleName: '',
+        LastName: ''
+
+      }));
+    }
+  }
 
   // Choose month using select dropdown
   changeFromMonth(e) {
@@ -118,13 +143,6 @@ export class DatesComponent implements OnInit {
     // this.From.setValue(e.target.value, {
     //   onlySelf: true
     // });
-  }
-
-
-  // Getter method to access formcontrols
-
-  get monthName() {
-    return this.builderForm.get('Form');
   }
   generateData() {
     console.log(this.selectedFromYear);
