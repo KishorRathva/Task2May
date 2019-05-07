@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder , Validators, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder ,FormControl, Validators, FormGroup, FormArray } from '@angular/forms';
 
 
 @Component({
@@ -46,7 +46,7 @@ export class DatesComponent implements OnInit {
   // Formated generated data
   formated: any[] = [];
   // create a formGroup that corresponds to the template
-  formGroup = this.fb.group({
+  formDataGroup = this.fb.group({
     MonthlyData: this.fb.array([]),
   });
 
@@ -60,8 +60,8 @@ export class DatesComponent implements OnInit {
 
   // generate forms
   genForms() {
-    const data = this.formGroup.controls.MonthlyData as FormArray;
-    for (let i = 0; i < this.formated.length, i++) {
+    const data = this.formDataGroup.controls.MonthlyData as FormArray;
+    for (let i = 0; i < this.formated.length; i++) {
       data.push(this.fb.group({
         FirstName: '',
         MiddleName: '',

@@ -49,17 +49,22 @@
               {{item}}
             </div>
             <div class="card-body">
-              <form [formGroup]="form">
-                <div class="form-row">
-                  <div class="col">
-                    <input type="text" class="form-control" placeholder="First name">
-                  </div>
-                  <div class="col">
-                    <input type="text" class="form-control" placeholder="Middle name">
-                  </div>
-                  <div class="col">
-                    <input type="text" class="form-control" placeholder="Last name">
-                  </div>
+              <form [formGroup]="formDataGroup">
+                <div formArrayName="MonthlyData" *ngFor="let item of formDataGroup.MonthlyData?.value; let i= index">
+                <ng-container [[formGroupName]="i"]>
+                    <div class="form-row">
+                        <div class="col">
+                          <input type="text" class="form-control" placeholder="First name">
+                        </div>
+                        <div class="col">
+                          <input type="text" class="form-control" placeholder="Middle name">
+                        </div>
+                        <div class="col">
+                          <input type="text" class="form-control" placeholder="Last name">
+                        </div>
+                      </div>
+                </ng-container>
+
                 </div>
                 </form>
 
