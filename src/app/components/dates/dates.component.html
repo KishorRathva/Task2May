@@ -39,12 +39,12 @@
           <hr>
         </div>
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-danger btn-lg btn-block">Submit</button>
+        <button *ngIf="!isSubmitted"  type="submit" class="btn btn-danger btn-lg btn-block">Submit</button>
       </form><!-- Form ends -->
     </div>
     <div class="col-md-6">
       <div *ngIf="isSubmitted">
-        <form [formGroup]="this.formDataGroup" (ngSubmit)="finalData()" >
+        <form [formGroup]="formDataGroup" (ngSubmit)="finalData()" >
           <div formArrayName="MonthlyData"
             *ngFor="let data of formDataGroup.get('MonthlyData').controls; let i = index">
             <div [formGroupName]="i">
