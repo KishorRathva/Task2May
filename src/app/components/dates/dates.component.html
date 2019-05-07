@@ -39,7 +39,7 @@
           <hr>
         </div>
         <!-- Submit Button -->
-        <button *ngIf="!isSubmitted"  type="submit" class="btn btn-danger btn-lg btn-block">Submit</button>
+        <button  [disabled]="isSubmitted"  type="submit" class="btn btn-danger btn-lg btn-block">Submit</button>
       </form><!-- Form ends -->
     </div>
     <div class="col-md-6">
