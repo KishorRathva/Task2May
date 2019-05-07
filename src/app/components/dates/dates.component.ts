@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder ,FormControl, Validators, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder , FormControl, Validators, FormGroup, FormArray } from '@angular/forms';
+import { JsonPipe } from '@angular/common';
 
 
 @Component({
@@ -47,7 +48,7 @@ export class DatesComponent implements OnInit {
   formated: any[] = [];
   // create a formGroup that corresponds to the template
   formDataGroup = this.fb.group({
-    MonthlyData: this.fb.array([]),
+    MonthlyData: this.fb.array([])
   });
 
 
@@ -59,16 +60,36 @@ export class DatesComponent implements OnInit {
   });
 
   // generate forms
-  genForms() {
-    const data = this.formDataGroup.controls.MonthlyData as FormArray;
-    for (let i = 0; i < this.formated.length; i++) {
-      data.push(this.fb.group({
-        FirstName: '',
-        MiddleName: '',
-        LastName: ''
+  genForms(): FormGroup {
 
-      }));
+      return this.fb.group({
+        month: [``, Validators.required],
+        firstName: ['', Validators.required],
+        middleName: ['', Validators.required],
+        lastName: ['', Validators.required]
+      });
+
+  }
+
+  // addforms for monthly data
+  addMonthData(): void {
+    const control = this.formDataGroup.get('MonthlyData');
+    for ( const i of this.formated) {
+      (control as FormArray).push(this.fb.group({
+        month: `${i}`,
+        firstName: '',
+        middleName: '',
+        lastName: ''
+       }));
     }
+
+
+
+    // for (const i in this.formated) {
+    //   control.push(control.);
+    // }
+    ( this.formDataGroup.get('MonthlyData') as FormArray).push(this.genForms());
+    console.log(this.formDataGroup.get('MonthlyData'));
   }
 
   // Choose month using select dropdown
@@ -221,7 +242,9 @@ export class DatesComponent implements OnInit {
         console.log(JSON.stringify(this.builderForm.value));
       }
       this.generateData();
+      this.addMonthData();
     }
+
 
   // generate 100 years
 
@@ -230,6 +253,11 @@ export class DatesComponent implements OnInit {
       this.fromYear.push(i);
     }
   }
+
+ // Last output
+ finalData(){
+   console.log(this.formDataGroup.value);
+ }
 
   ngOnInit() {
     this.generateYear();
