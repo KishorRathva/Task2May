@@ -1,66 +1,77 @@
-
-
 <div class="container">
   <div class="row custom-wrapper">
-     <div class="col-md-6">
-        <!-- Form starts -->
-        <form class="form-inline" [formGroup]=" builderForm" (ngSubmit)="onSubmit()">
+    <div class="col-md-6">
+      <!-- Form starts -->
+      <form class="form-inline" [formGroup]=" builderForm" (ngSubmit)="onSubmit()">
         <div class="group-gap">
 
-            <fieldset style="border:0px; border-top:1px solid black">
-                <legend>From</legend>
-                <select id="year" class="custom-select"  formControlName="FromYear" (change)="changeFromYear($event)">
-                    <option value="">YEAR</option>
-                    <option *ngFor="let year of fromYear" [ngValue]="year">{{year}}</option>
-                   </select>
+          <fieldset style="border:0px; border-top:1px solid black">
+            <legend>From</legend>
+            <select id="year" class="custom-select" formControlName="FromYear" (change)="changeFromYear($event)">
+              <option value="">YEAR</option>
+              <option *ngFor="let year of fromYear" [ngValue]="year">{{year}}</option>
+            </select>
 
-                    <select id="month" class="custom-select"  formControlName="FromMonth" (change)="changeFromMonth($event)">
-                     <option value="">MONTH</option>
-                     <option *ngFor="let month of months" [ngValue]="month">{{month}}</option>
-                    </select>
-            </fieldset>
+            <select id="month" class="custom-select" formControlName="FromMonth" (change)="changeFromMonth($event)">
+              <option value="">MONTH</option>
+              <option *ngFor="let month of months" [ngValue]="month">{{month}}</option>
+            </select>
+          </fieldset>
 
-                 <hr>
-                 <fieldset style="border:0px; border-top:1px solid black">
-                    <legend>To</legend>
-                    <select *ngIf="isSelectedFromMonth"  id="year" class="custom-select"  formControlName="ToYear" (change)="changeToYear($event)">
-                        <option value="">YEAR</option>
-                        <option *ngFor="let year of toYear" [ngValue]="year">{{year}}</option>
-                       </select>
-
-
-                        <select *ngIf="isSelectedFromMonth"  id="month" class="custom-select"  formControlName="ToMonth" (change)="changeToMonth($event)">
-                         <option value="">MONTH</option>
-                         <option *ngFor="let month of toMonths" [ngValue]="month">{{month}}</option>
-                        </select>
-                  </fieldset>
+          <hr>
+          <fieldset style="border:0px; border-top:1px solid black">
+            <legend>To</legend>
+            <select *ngIf="isSelectedFromMonth" id="year" class="custom-select" formControlName="ToYear"
+              (change)="changeToYear($event)">
+              <option value="">YEAR</option>
+              <option *ngFor="let year of toYear" [ngValue]="year">{{year}}</option>
+            </select>
 
 
-                  <hr>
+            <select *ngIf="isSelectedFromMonth" id="month" class="custom-select" formControlName="ToMonth"
+              (change)="changeToMonth($event)">
+              <option value="">MONTH</option>
+              <option *ngFor="let month of toMonths" [ngValue]="month">{{month}}</option>
+            </select>
+          </fieldset>
 
 
-
-
+          <hr>
         </div>
         <!-- Submit Button -->
         <button type="submit" class="btn btn-danger btn-lg btn-block">Submit</button>
-        </form><!-- Form ends -->
-     </div>
-     <div  class="col-md-6">
-       <div *ngIf="isSubmitted">
-        <div *ngFor="let item of formated"  class="card">
-            <div class="card-header">
-              {{item}}
-            </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
-                  </ul>
+      </form><!-- Form ends -->
+    </div>
+    <div class="col-md-6">
+      <div *ngIf="isSubmitted">
+        <form [formGroup]="this.formDataGroup" (ngSubmit)="finalData()" >
+          <div formArrayName="MonthlyData"
+            *ngFor="let data of formDataGroup.get('MonthlyData').controls; let i = index">
+            <div [formGroupName]="i">
+              <div class="card" *ngIf="(data.value).month != ''" >
+                <div class="card-header">{{((data.value).month)}}</div>
+                  <div class="card-body">
+
+                    <div class="form-row">
+                      <div class="col">
+                        <input type="text" class="form-control" placeholder="First name">
+                      </div>
+                      <div class="col">
+                        <input type="text" class="form-control" placeholder="Middle name">
+                      </div>
+                      <div class="col">
+                        <input type="text" class="form-control" placeholder="Last name">
+                      </div>
+                    </div>
+
+
+
+                  </div>
+              </div>
             </div>
           </div>
-          </div>
-     </div>
+          <button type="submit" class="btn btn-danger btn-lg btn-block">Generate Result</button>
+        </form>
+      </div>
+    </div>
   </div>
-</div>
