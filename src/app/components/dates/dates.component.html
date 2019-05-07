@@ -67,7 +67,7 @@
               </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-danger btn-lg btn-block">Generate Result</button>
+          <button type="submit" class="btn btn-danger btn-lg btn-block" [disabled]="!formDataGroup.valid">Generate Result</button>
         </form>
       </div>
     </div>

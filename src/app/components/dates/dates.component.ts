@@ -10,12 +10,6 @@ import { JsonPipe } from '@angular/common';
 export class DatesComponent implements OnInit {
   constructor(public fb: FormBuilder) { }
 
-  // Getter method to access formcontrols
-
-  get monthName() {
-    return this.builderForm.get('Form');
-  }
-
   // Boolean values
   isSubmitted = false;
   isSelectedFromMonth = false;
@@ -56,35 +50,20 @@ export class DatesComponent implements OnInit {
     ToMonth: ['', [Validators.required]]
   });
 
-  // generate forms
-  genForms(): FormGroup {
-    return this.fb.group({
-      month: [``, Validators.required],
-      firstName: ['', Validators.required],
-      middleName: ['', Validators.required],
-      lastName: ['', Validators.required]
-    });
-  }
-
   // addforms for monthly data
   addMonthData(): void {
     const control = this.formDataGroup.get('MonthlyData');
     for (const i of this.formated) {
+      console.log(i);
       (control as FormArray).push(
         this.fb.group({
-          month: `${i}`,
-          firstName: '',
-          middleName: '',
-          lastName: ''
+          month: [`${i}`, [Validators.required]],
+          firstName: ['', [Validators.required]],
+          middleName: ['', [Validators.required]],
+          lastName: ['', [Validators.required]]
         })
       );
     }
-
-    // for (const i in this.formated) {
-    //   control.push(control.);
-    // }
-    (this.formDataGroup.get('MonthlyData') as FormArray).push(this.genForms());
-    console.log(this.formDataGroup.get('MonthlyData'));
   }
 
   // Choose month using select dropdown
@@ -242,6 +221,7 @@ export class DatesComponent implements OnInit {
   // Last output
   finalData() {
     console.log(this.formDataGroup.value);
+    console.log(this.formDataGroup.valid);
   }
 
   ngOnInit() {
