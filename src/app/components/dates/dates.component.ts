@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder , FormControl, Validators, FormGroup, FormArray } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
+import { FormBuilder , Validators } from '@angular/forms';
 
 
 @Component({
@@ -9,14 +8,6 @@ import { JsonPipe } from '@angular/common';
   styleUrls: ['./dates.component.css']
 })
 export class DatesComponent implements OnInit {
-  constructor(public fb: FormBuilder) { }
-
-
-  // Getter method to access formcontrols
-
-  get monthName() {
-    return this.builderForm.get('Form');
-  }
 
   // Boolean values
   isSubmitted = false;
@@ -46,11 +37,7 @@ export class DatesComponent implements OnInit {
   generatedData: any[] = [];
   // Formated generated data
   formated: any[] = [];
-  // create a formGroup that corresponds to the template
-  formDataGroup = this.fb.group({
-    MonthlyData: this.fb.array([])
-  });
-
+  constructor(public fb: FormBuilder) { }
 
   builderForm = this.fb.group({
     FromYear: ['', [Validators.required]],
@@ -59,45 +46,12 @@ export class DatesComponent implements OnInit {
     ToMonth: ['', [Validators.required]],
   });
 
-  // generate forms
-  genForms(): FormGroup {
-
-      return this.fb.group({
-        month: [``, Validators.required],
-        firstName: ['', Validators.required],
-        middleName: ['', Validators.required],
-        lastName: ['', Validators.required]
-      });
-
-  }
-
-  // addforms for monthly data
-  addMonthData(): void {
-    const control = this.formDataGroup.get('MonthlyData');
-    for ( const i of this.formated) {
-      (control as FormArray).push(this.fb.group({
-        month: `${i}`,
-        firstName: '',
-        middleName: '',
-        lastName: ''
-       }));
-    }
-
-
-
-    // for (const i in this.formated) {
-    //   control.push(control.);
-    // }
-    ( this.formDataGroup.get('MonthlyData') as FormArray).push(this.genForms());
-    console.log(this.formDataGroup.get('MonthlyData'));
-  }
-
   // Choose month using select dropdown
   changeFromMonth(e) {
     console.log('into the from month ....');
     console.log(JSON.stringify((e.target.value).split(':')));
-    this.selectedFromMonth = this.months.indexOf(((e.target.value).split(':')[1]).trim()) ;
-    console.log(`selectedFromMonth:${this.selectedFromMonth}`);
+    this.selectedFromMonth = (e.target.value).split(':')[0] ;
+    console.log(this.selectedFromMonth);
     console.log(this.months);
     this.isSelectedFromMonth = true;
 
@@ -112,10 +66,10 @@ export class DatesComponent implements OnInit {
     // });
   }
   changeToMonth(e) {
-    console.log('......................');
+    console.log(typeof(e.target.value));
     console.log(JSON.stringify((e.target.value).split(':')));
-    this.selectedToMonth = this.months.indexOf(((e.target.value).split(':')[1]).trim()) ;
-    console.log(`selectedToMonth:${this.selectedToMonth}`);
+    this.selectedToMonth = (e.target.value).split(':')[0] ;
+
     // clear all the values that previuosly stored
     this.generatedData = [];
     this.betweenMonths = [];
@@ -144,12 +98,8 @@ export class DatesComponent implements OnInit {
   changeToYear(e) {
     console.log(typeof(e.target.value));
     console.log(JSON.stringify((e.target.value).split(':')));
-    // console.log(`${this.selectedFromYear} == ${(e.target.value).split(':')[1]}`);
-    // console.log(this.selectedFromYear === (e.target.value).split(':')[1]);
     if (this.selectedFromYear === (e.target.value).split(':')[1] ) {
-        console.log(this.months.length);
-        this.toMonths = this.months.slice(+this.selectedFromMonth + 1, +this.months.length);
-        console.log(this.toMonths);
+        this.toMonths = this.months.slice(this.selectedFromMonth, this.months.length);
      } else {
        this.toMonths = this.months ;
      }
@@ -165,6 +115,13 @@ export class DatesComponent implements OnInit {
     //   onlySelf: true
     // });
   }
+
+
+  // Getter method to access formcontrols
+
+  get monthName() {
+    return this.builderForm.get('Form');
+  }
   generateData() {
     console.log(this.selectedFromYear);
     console.log(this.selectedToYear);
@@ -175,20 +132,15 @@ export class DatesComponent implements OnInit {
       // used slice because it doesn't change original array
       console.log(`selectedFromMonth-${this.selectedFromMonth}`);
       console.log(`selectedToMonth-${this.selectedToMonth}`);
-      this.generatedData = this.months.slice(this.selectedFromMonth, +this.selectedToMonth + 1);
+      this.generatedData = this.months.slice(this.selectedFromMonth-1,+this.selectedToMonth+1);
 
     } else {
       console.log(`selectedFromMonth-${this.selectedFromMonth}`);
       console.log(`selectedToMonth-${this.selectedToMonth}`);
 
       console.log(`yearDifference: ${this.yearDifference}`);
-      this.fromYrMonths = this.months.slice(this.selectedFromMonth, +this.months.length);
-      if (this.selectedToMonth === 0) {
-        this.toYrMonths = ['JAN'];
-      } else {
-        this.toYrMonths =  this.months.slice(0, +this.selectedToMonth + 1);
-      }
-
+      this.fromYrMonths = this.months.slice(this.selectedFromMonth - 1, this.months.length);
+      this.toYrMonths =  this.months.slice(0, +this.selectedToMonth+1);
 
       for (let i = 0; i < this.yearDifference; i++) {
         this.betweenMonths = (this.betweenMonths).concat(this.months);
@@ -212,20 +164,9 @@ export class DatesComponent implements OnInit {
   formatedData(): void {
     const start = this.months[0];
     let year = this.selectedFromYear ;
-    let startFlagForJAN = 0;
-    // check if genereted data has 'JAN' as first element
-
-    if ( this.generatedData[0] === start) {
-        startFlagForJAN = 1;
-    }
-
     this.formated =  this.generatedData.map( i => {
     if (i === start) {
-       if (startFlagForJAN) {
-         year -- ;
-         startFlagForJAN = 0;
-       }
-       year++;
+        year++;
     }
     return `${i}-${year}`;
   });
@@ -239,12 +180,10 @@ export class DatesComponent implements OnInit {
       if (! this.builderForm.valid) {
         return false;
       } else {
-        console.log(JSON.stringify(this.builderForm.value));
+        alert(JSON.stringify(this.builderForm.value));
       }
       this.generateData();
-      this.addMonthData();
     }
-
 
   // generate 100 years
 
@@ -253,11 +192,6 @@ export class DatesComponent implements OnInit {
       this.fromYear.push(i);
     }
   }
-
- // Last output
- finalData(){
-   console.log(this.formDataGroup.value);
- }
 
   ngOnInit() {
     this.generateYear();
